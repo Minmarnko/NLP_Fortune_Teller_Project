@@ -1,0 +1,152 @@
+import random
+import csv
+import time
+import google.generativeai as genai
+
+# 🔐 Step 1: Configure Gemini API
+genai.configure(api_key="AIzaSyBX_duyO--fjijD-41n-AuiUB3feJLcPW0")  # Replace with your actual key
+
+# 🎴 Step 2: Data pool
+zodiac_signs = [
+    "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo",
+    "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"
+]
+
+questions = [
+    "Will I find true love this year?",
+    "Is my current partner the one for me?",
+    "Why do I keep attracting the wrong people?",
+    "Is it time to let go of my past relationship?",
+    "What does the future of my love life look like?",
+    "Should I confess my feelings to them?",
+    "Am I ready for a new relationship?",
+    "Why do I feel so disconnected from my partner?",
+    "Will my long-distance relationship work out?",
+    "Is there someone new coming into my life?",
+    "How can I heal from heartbreak?",
+    "What is blocking me from finding love?",
+    "Will we get back together?",
+    "What can I do to attract love into my life?",
+    "Are they thinking about me too?",
+    "What is the lesson from my past relationships?",
+    "Will I get married soon?",
+    "How does my partner truly feel about me?",
+    "Should I move on or wait for them?",
+    "What kind of love do I deserve?",
+    "Is this relationship aligned with my soul path?",
+    "Why am I afraid of intimacy?",
+    "What is the next step in our relationship?",
+    "Are we meant to be together?",
+    "What is the purpose of this connection?",
+    "How can I strengthen the bond with my partner?",
+    "Is there a karmic lesson in this relationship?",
+    "What do I need to work on before loving again?",
+    "Will I experience a deep spiritual love?",
+    "Is my ex still thinking of me?",
+    "Am I in a twin flame relationship?",
+    "What qualities should I look for in a partner?",
+    "Is my partner being honest with me?",
+    "What role does love play in my life right now?",
+    "How can I rebuild trust after betrayal?",
+    "Am I sabotaging my relationships unknowingly?",
+    "What is my heart truly longing for?",
+    "Is now a good time to open up emotionally?",
+    "Will I be reunited with my soulmate?",
+    "How can I create a healthy relationship?",
+    "What emotional wounds are affecting my love life?",
+    "Am I seeing this relationship clearly?",
+    "How can I be more vulnerable in love?",
+    "What is the deeper meaning of our connection?",
+    "Is it love or attachment that I'm feeling?",
+    "How can I invite more romance into my life?",
+    "What do I need to release to find love?",
+    "Will this crush turn into something more?",
+    "What do the cards say about our chemistry?",
+    "How do I know if it's time to walk away?"
+]
+
+tarot_cards = [
+    # Major Arcana (22)
+    "The Fool", "The Magician", "The High Priestess", "The Empress", "The Emperor",
+    "The Hierophant", "The Lovers", "The Chariot", "Strength", "The Hermit",
+    "Wheel of Fortune", "Justice", "The Hanged Man", "Death", "Temperance",
+    "The Devil", "The Tower", "The Star", "The Moon", "The Sun",
+    "Judgement", "The World",
+
+    # Minor Arcana – Wands (14)
+    "Ace of Wands", "Two of Wands", "Three of Wands", "Four of Wands", "Five of Wands",
+    "Six of Wands", "Seven of Wands", "Eight of Wands", "Nine of Wands", "Ten of Wands",
+    "Page of Wands", "Knight of Wands", "Queen of Wands", "King of Wands",
+
+    # Minor Arcana – Cups (14)
+    "Ace of Cups", "Two of Cups", "Three of Cups", "Four of Cups", "Five of Cups",
+    "Six of Cups", "Seven of Cups", "Eight of Cups", "Nine of Cups", "Ten of Cups",
+    "Page of Cups", "Knight of Cups", "Queen of Cups", "King of Cups",
+
+    # Minor Arcana – Swords (14)
+    "Ace of Swords", "Two of Swords", "Three of Swords", "Four of Swords", "Five of Swords",
+    "Six of Swords", "Seven of Swords", "Eight of Swords", "Nine of Swords", "Ten of Swords",
+    "Page of Swords", "Knight of Swords", "Queen of Swords", "King of Swords",
+
+    # Minor Arcana – Pentacles (14)
+    "Ace of Pentacles", "Two of Pentacles", "Three of Pentacles", "Four of Pentacles", "Five of Pentacles",
+    "Six of Pentacles", "Seven of Pentacles", "Eight of Pentacles", "Nine of Pentacles", "Ten of Pentacles",
+    "Page of Pentacles", "Knight of Pentacles", "Queen of Pentacles", "King of Pentacles"
+]
+
+# 🧠 Step 3: Gemini model setup
+model = genai.GenerativeModel("gemini-1.5-pro-latest")
+
+# ✍️ Step 4: Prompt generator (casual + compact)
+def create_prompt(zodiac, question, cards):
+    return f"""
+You're a helpful and modern tarot reader. Based on the zodiac sign, question, and three tarot cards, write a short, clear tarot reading.
+
+Zodiac Sign: {zodiac}  
+User Question: {question}  
+Tarot Cards: {cards[0]}, {cards[1]}, {cards[2]}  
+
+Keep it to 2–3 simple sentences.  
+Each sentence should be under 20 words.  
+Use a casual and neutral tone (no mystical or dramatic wording).  
+End with a short summary or advice sentence.
+
+Reading:
+"""
+
+# 🧼 Optional: Clean response text
+def clean_reading(text):
+    text = text.replace("\n", " ").strip()
+    if '"' in text:
+        text = text.replace('"', "'")
+    return text
+
+# 💾 Step 5: Generate and save to CSV
+output_file = "tarot_readings_love_final.csv"
+
+with open(output_file, mode='w', newline='', encoding='utf-8') as file:
+    writer = csv.writer(file)
+    writer.writerow(["zodiac", "question", "card1", "card2", "card3", "reading"])
+
+    for i in range(2000):  # Change to 20000 if needed
+        zodiac = random.choice(zodiac_signs)
+        question = random.choice(questions)
+        cards = random.sample(tarot_cards, 3)
+        prompt = create_prompt(zodiac, question, cards)
+
+        try:
+            response = model.generate_content(prompt)
+            reading = clean_reading(response.text)
+
+            if reading and len(reading.split()) <= 60:  # Ensures compact reading
+                writer.writerow([zodiac, question, cards[0], cards[1], cards[2], reading])
+                print(f"[{i+1}] ✅ {zodiac} | {cards} | {reading[:60]}...")
+            else:
+                print(f"[{i+1}] ⚠️ Skipped (too long)")
+        except Exception as e:
+            print(f"[{i+1}] ❌ Error: {e}")
+            time.sleep(3)
+
+        time.sleep(0.8)
+
+print(f"\n✅ Dataset saved to: {output_file}")

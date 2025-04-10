@@ -1,0 +1,152 @@
+import random
+import csv
+import time
+import google.generativeai as genai
+
+# 🔐 Step 1: Configure Gemini API
+genai.configure(api_key="AIzaSyBX_duyO--fjijD-41n-AuiUB3feJLcPW0")  # Replace with your actual key
+
+# 🎴 Step 2: Data pool
+zodiac_signs = [
+    "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo",
+    "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"
+]
+
+questions = [
+    "Should I change my career path?",
+    "Am I on the right path professionally?",
+    "What is blocking my career growth?",
+    "Will I find a new job soon?",
+    "Is my current job aligned with my purpose?",
+    "How can I find more fulfillment in my work?",
+    "Will I get the promotion I desire?",
+    "What should I focus on to grow my career?",
+    "Am I being recognized for my efforts at work?",
+    "What does the future hold for my career?",
+    "How can I overcome challenges at work?",
+    "Is now a good time to start my own business?",
+    "What career best suits my soul's calling?",
+    "Why do I feel stuck in my job?",
+    "Will my hard work pay off soon?",
+    "What skills should I develop to advance?",
+    "Should I take the job offer I received?",
+    "Is entrepreneurship right for me?",
+    "How can I achieve work-life balance?",
+    "What do I need to learn to progress professionally?",
+    "Will my current project be successful?",
+    "Am I working in the right environment?",
+    "Should I relocate for better opportunities?",
+    "How do my coworkers truly see me?",
+    "What is the lesson in my current job experience?",
+    "Will I receive financial rewards from my work?",
+    "Is my leadership being acknowledged?",
+    "What type of work brings me joy and purpose?",
+    "How can I deal with toxic workplace energy?",
+    "What does the universe want me to know about my job?",
+    "Should I pursue a promotion or explore other options?",
+    "How do I break free from career stagnation?",
+    "Is a career change the right decision now?",
+    "How can I align my career with my passions?",
+    "Will I find success in a creative field?",
+    "What is the energy surrounding my next career move?",
+    "Am I undervaluing my professional worth?",
+    "What guidance do the cards offer for my professional growth?",
+    "Will my efforts at work be rewarded soon?",
+    "How can I create more stability in my career?",
+    "Is this job a stepping stone or long-term opportunity?",
+    "Should I invest in further education or training?",
+    "What hidden talents can I apply to my profession?",
+    "How can I shine more in my workplace?",
+    "What is my soul’s mission in the professional world?",
+    "Am I ready for a leadership role?",
+    "What career decision will bring me the most peace?",
+    "What changes should I make in my work life?",
+    "How can I be more confident in my career path?",
+    "Is fear holding me back from professional success?"
+]
+
+tarot_cards = [
+    # Major Arcana (22)
+    "The Fool", "The Magician", "The High Priestess", "The Empress", "The Emperor",
+    "The Hierophant", "The Lovers", "The Chariot", "Strength", "The Hermit",
+    "Wheel of Fortune", "Justice", "The Hanged Man", "Death", "Temperance",
+    "The Devil", "The Tower", "The Star", "The Moon", "The Sun",
+    "Judgement", "The World",
+
+    # Minor Arcana – Wands (14)
+    "Ace of Wands", "Two of Wands", "Three of Wands", "Four of Wands", "Five of Wands",
+    "Six of Wands", "Seven of Wands", "Eight of Wands", "Nine of Wands", "Ten of Wands",
+    "Page of Wands", "Knight of Wands", "Queen of Wands", "King of Wands",
+
+    # Minor Arcana – Cups (14)
+    "Ace of Cups", "Two of Cups", "Three of Cups", "Four of Cups", "Five of Cups",
+    "Six of Cups", "Seven of Cups", "Eight of Cups", "Nine of Cups", "Ten of Cups",
+    "Page of Cups", "Knight of Cups", "Queen of Cups", "King of Cups",
+
+    # Minor Arcana – Swords (14)
+    "Ace of Swords", "Two of Swords", "Three of Swords", "Four of Swords", "Five of Swords",
+    "Six of Swords", "Seven of Swords", "Eight of Swords", "Nine of Swords", "Ten of Swords",
+    "Page of Swords", "Knight of Swords", "Queen of Swords", "King of Swords",
+
+    # Minor Arcana – Pentacles (14)
+    "Ace of Pentacles", "Two of Pentacles", "Three of Pentacles", "Four of Pentacles", "Five of Pentacles",
+    "Six of Pentacles", "Seven of Pentacles", "Eight of Pentacles", "Nine of Pentacles", "Ten of Pentacles",
+    "Page of Pentacles", "Knight of Pentacles", "Queen of Pentacles", "King of Pentacles"
+]
+
+# 🧠 Step 3: Gemini model setup
+model = genai.GenerativeModel("gemini-1.5-pro-latest")
+
+# ✍️ Step 4: Prompt generator (casual + compact)
+def create_prompt(zodiac, question, cards):
+    return f"""
+You're a helpful and modern tarot reader. Based on the zodiac sign, question, and three tarot cards, write a short, clear tarot reading.
+
+Zodiac Sign: {zodiac}  
+User Question: {question}  
+Tarot Cards: {cards[0]}, {cards[1]}, {cards[2]}  
+
+Keep it to 2–3 simple sentences.  
+Each sentence should be under 20 words.  
+Use a casual and neutral tone (no mystical or dramatic wording).  
+End with a short summary or advice sentence.
+
+Reading:
+"""
+
+# 🧼 Optional: Clean response text
+def clean_reading(text):
+    text = text.replace("\n", " ").strip()
+    if '"' in text:
+        text = text.replace('"', "'")
+    return text
+
+# 💾 Step 5: Generate and save to CSV
+output_file = "tarot_readings_profession_final.csv"
+
+with open(output_file, mode='w', newline='', encoding='utf-8') as file:
+    writer = csv.writer(file)
+    writer.writerow(["zodiac", "question", "card1", "card2", "card3", "reading"])
+
+    for i in range(2000):  # Change to 20000 if needed
+        zodiac = random.choice(zodiac_signs)
+        question = random.choice(questions)
+        cards = random.sample(tarot_cards, 3)
+        prompt = create_prompt(zodiac, question, cards)
+
+        try:
+            response = model.generate_content(prompt)
+            reading = clean_reading(response.text)
+
+            if reading and len(reading.split()) <= 60:  # Ensures compact reading
+                writer.writerow([zodiac, question, cards[0], cards[1], cards[2], reading])
+                print(f"[{i+1}] ✅ {zodiac} | {cards} | {reading[:60]}...")
+            else:
+                print(f"[{i+1}] ⚠️ Skipped (too long)")
+        except Exception as e:
+            print(f"[{i+1}] ❌ Error: {e}")
+            time.sleep(3)
+
+        time.sleep(0.8)
+
+print(f"\n✅ Dataset saved to: {output_file}")

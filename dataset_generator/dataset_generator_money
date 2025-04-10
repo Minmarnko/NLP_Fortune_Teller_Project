@@ -1,0 +1,152 @@
+import random
+import csv
+import time
+import google.generativeai as genai
+
+# 🔐 Step 1: Configure Gemini API
+genai.configure(api_key="AIzaSyBX_duyO--fjijD-41n-AuiUB3feJLcPW0")  # Replace with your actual key
+
+# 🎴 Step 2: Data pool
+zodiac_signs = [
+    "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo",
+    "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"
+]
+
+questions = [
+    "Will my financial situation improve soon?",
+    "How can I create more abundance in my life?",
+    "What is blocking my financial growth?",
+    "Should I take the investment opportunity?",
+    "What do I need to know about my current spending habits?",
+    "How can I become more financially independent?",
+    "Is now a good time to change my job for better pay?",
+    "Will I find a stable source of income?",
+    "What role does money play in my life's purpose?",
+    "How can I overcome fear around money?",
+    "What lesson am I learning through financial challenges?",
+    "Am I making wise financial decisions?",
+    "What can I do to attract financial success?",
+    "Should I save more or invest more right now?",
+    "What does the universe want me to know about my finances?",
+    "Is a financial breakthrough coming my way?",
+    "What mindset shift do I need for prosperity?",
+    "How can I release financial stress and anxiety?",
+    "What hidden opportunities exist to increase my income?",
+    "Am I using my financial resources wisely?",
+    "How can I heal my relationship with money?",
+    "What energy surrounds my financial future?",
+    "Is it time to take a financial risk or play it safe?",
+    "What does financial stability look like for me?",
+    "What abundance is trying to enter my life?",
+    "How can I improve my budgeting and planning?",
+    "Am I aligned with my financial goals?",
+    "What emotional patterns affect my money decisions?",
+    "Is my financial struggle temporary or long-term?",
+    "What is the spiritual meaning behind my financial state?",
+    "What should I focus on to build long-term wealth?",
+    "Will a new source of income appear soon?",
+    "What guidance do the cards offer about debt?",
+    "How can I create a healthier money mindset?",
+    "Am I open to receiving wealth?",
+    "What does my intuition say about a financial move?",
+    "How can I balance giving and receiving financially?",
+    "What financial habits no longer serve me?",
+    "What changes should I make to reach financial goals?",
+    "What career move would bring financial freedom?",
+    "Is money flowing into my life or being blocked?",
+    "What role does gratitude play in attracting wealth?",
+    "Am I being too cautious or too impulsive with money?",
+    "How can I find peace with my financial past?",
+    "What is the next step in my financial journey?",
+    "How can I manifest more financial opportunities?",
+    "Is financial freedom achievable for me?",
+    "What spiritual message do the cards offer about wealth?",
+    "How can I protect and grow my finances?",
+    "What fears do I need to release to welcome abundance?"
+]
+
+tarot_cards = [
+    # Major Arcana (22)
+    "The Fool", "The Magician", "The High Priestess", "The Empress", "The Emperor",
+    "The Hierophant", "The Lovers", "The Chariot", "Strength", "The Hermit",
+    "Wheel of Fortune", "Justice", "The Hanged Man", "Death", "Temperance",
+    "The Devil", "The Tower", "The Star", "The Moon", "The Sun",
+    "Judgement", "The World",
+
+    # Minor Arcana – Wands (14)
+    "Ace of Wands", "Two of Wands", "Three of Wands", "Four of Wands", "Five of Wands",
+    "Six of Wands", "Seven of Wands", "Eight of Wands", "Nine of Wands", "Ten of Wands",
+    "Page of Wands", "Knight of Wands", "Queen of Wands", "King of Wands",
+
+    # Minor Arcana – Cups (14)
+    "Ace of Cups", "Two of Cups", "Three of Cups", "Four of Cups", "Five of Cups",
+    "Six of Cups", "Seven of Cups", "Eight of Cups", "Nine of Cups", "Ten of Cups",
+    "Page of Cups", "Knight of Cups", "Queen of Cups", "King of Cups",
+
+    # Minor Arcana – Swords (14)
+    "Ace of Swords", "Two of Swords", "Three of Swords", "Four of Swords", "Five of Swords",
+    "Six of Swords", "Seven of Swords", "Eight of Swords", "Nine of Swords", "Ten of Swords",
+    "Page of Swords", "Knight of Swords", "Queen of Swords", "King of Swords",
+
+    # Minor Arcana – Pentacles (14)
+    "Ace of Pentacles", "Two of Pentacles", "Three of Pentacles", "Four of Pentacles", "Five of Pentacles",
+    "Six of Pentacles", "Seven of Pentacles", "Eight of Pentacles", "Nine of Pentacles", "Ten of Pentacles",
+    "Page of Pentacles", "Knight of Pentacles", "Queen of Pentacles", "King of Pentacles"
+]
+
+# 🧠 Step 3: Gemini model setup
+model = genai.GenerativeModel("gemini-1.5-pro-latest")
+
+# ✍️ Step 4: Prompt generator (casual + compact)
+def create_prompt(zodiac, question, cards):
+    return f"""
+You're a helpful and modern tarot reader. Based on the zodiac sign, question, and three tarot cards, write a short, clear tarot reading.
+
+Zodiac Sign: {zodiac}  
+User Question: {question}  
+Tarot Cards: {cards[0]}, {cards[1]}, {cards[2]}  
+
+Keep it to 2–3 simple sentences.  
+Each sentence should be under 20 words.  
+Use a casual and neutral tone (no mystical or dramatic wording).  
+End with a short summary or advice sentence.
+
+Reading:
+"""
+
+# 🧼 Optional: Clean response text
+def clean_reading(text):
+    text = text.replace("\n", " ").strip()
+    if '"' in text:
+        text = text.replace('"', "'")
+    return text
+
+# 💾 Step 5: Generate and save to CSV
+output_file = "tarot_readings_money_final.csv"
+
+with open(output_file, mode='w', newline='', encoding='utf-8') as file:
+    writer = csv.writer(file)
+    writer.writerow(["zodiac", "question", "card1", "card2", "card3", "reading"])
+
+    for i in range(2000):  # Change to 20000 if needed
+        zodiac = random.choice(zodiac_signs)
+        question = random.choice(questions)
+        cards = random.sample(tarot_cards, 3)
+        prompt = create_prompt(zodiac, question, cards)
+
+        try:
+            response = model.generate_content(prompt)
+            reading = clean_reading(response.text)
+
+            if reading and len(reading.split()) <= 60:  # Ensures compact reading
+                writer.writerow([zodiac, question, cards[0], cards[1], cards[2], reading])
+                print(f"[{i+1}] ✅ {zodiac} | {cards} | {reading[:60]}...")
+            else:
+                print(f"[{i+1}] ⚠️ Skipped (too long)")
+        except Exception as e:
+            print(f"[{i+1}] ❌ Error: {e}")
+            time.sleep(3)
+
+        time.sleep(0.8)
+
+print(f"\n✅ Dataset saved to: {output_file}")
