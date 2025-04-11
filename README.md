@@ -53,10 +53,10 @@ Random Tarot Card Draws: Select card1, card2, card3
 Tarot Reading Generation:
    Flan-T5 model takes [zodiac, question_sentiment, card1, card2, card3] → Generates reading
       ↓
+Personalized Tarot Reading
+      ↓
 Final Sentiment Analysis on Reading:
    DistilBERT model evaluates reading's emotional tone
-      ↓
-Output: Personalized Tarot Reading
 ```
 
 ---
@@ -74,7 +74,7 @@ Output: Personalized Tarot Reading
 ### 🔮 **Tarot Reading Generator (Flan-T5)**
 - Fine-tuned `flan-t5-base` model  
 - Trained on the AI-generated dataset with inputs:  
-  `[zodiac_sign, question_sentiment, card1, card2, card3] → reading`
+  `[zodiac_sign, question, question_sentiment, card1, card2, card3] → reading`
 
 ---
 
