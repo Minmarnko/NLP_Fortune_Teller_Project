@@ -1,70 +1,93 @@
 # AI-Powered Tarot Reading Using NLP and Sentiment Analysis
 
 ## Project Overview  
-This project explores the application of **Natural Language Processing (NLP)** and **sentiment-aware AI models** for **personalized Tarot readings**. Traditional Tarot readings rely on **human intuition and predefined interpretations**, but this research aims to **automate and personalize** the process using AI-driven text generation. By integrating **user input (questions & zodiac signs), sentiment detection (BERT), and a fine-tuned GPT-2 model**, we generate **refined and engaging Tarot readings**. The project aims to evaluate the **accuracy, engagement, personalization, and thematic coherence** of AI-generated fortune readings.
-
-## Problem Statement  
-Traditional fortune-telling methods are **static, template-based, and lack personalization**. Most existing **AI-generated Tarot readings** suffer from **generic content** due to the absence of user **sentiment adaptation** and **astrological insights**. Current models do not integrate **zodiac-based variations**, making them **less engaging** and **less believable**. This study addresses these challenges by designing an **AI-powered Tarot reading system** that adapts **predictions based on user sentiment and astrological features**.
-
-## Research Questions  
-This study aims to answer the following research questions:  
-1. **How can sentiment-aware NLP models enhance the personalization of AI-generated Tarot readings?**  
-2. **What is the impact of zodiac-based adaptation on the perceived authenticity of Tarot predictions?**  
-3. **How does an AI-generated Tarot reading compare to human-created interpretations in terms of coherence and engagement?**  
-
-## Dataset  
-This project uses a combination of **structured Tarot reading texts, sentiment-annotated datasets, and user-specific features** to fine-tune AI models.  
-
-### **Primary Dataset: Tarot Readings Dataset**  
-- **Source:** Hugging Face ([tarot_readings.csv](https://huggingface.co/datasets/Dendory/tarot/blob/main/tarot_readings.csv))  
-- **Contents:**  
-  - Tarot card names (78 cards, upright and reversed)  
-  - Interpretations (love, career, personal growth)  
-  - General fortune-telling descriptions  
-
-### **Extended Dataset: Personalized Tarot Dataset**  
-- AI-generated dataset incorporating:  
-  - **User Birth Date:** Mapped to zodiac signs for astrological context  
-  - **Sentiment-Based Variations:** Tarot readings adapted for **positive, neutral, and negative moods**  
-  - **Custom Fortune Templates:** AI-augmented texts for diverse and personalized readings  
-
-### **Sentiment Analysis Training Dataset**  
-- **Source:** Pre-existing sentiment-annotated datasets (for fine-tuning BERT)  
-- **Purpose:** Helps classify user input sentiment before generating a reading  
-
-## Methodology  
-The proposed system follows a **structured NLP pipeline**, integrating **sentiment-aware response generation** and **astrological mappings**.  
-
-### **1. System Workflow**  
-1. **User Input:** The system receives a **question** and **zodiac sign**.  
-2. **Preprocessing:** Tokenization, text cleaning, and Named Entity Recognition (NER) extract key features.  
-3. **Sentiment Analysis (BERT):** Determines whether the user's tone is **positive, neutral, or negative**.  
-4. **Tarot Model (Fine-tuned GPT-2):** Generates a Tarot reading tailored to **sentiment and zodiac sign**.  
-5. **Output:** The final **refined Tarot reading** is presented to the user.  
-
-### **2. Data Preprocessing**  
-- **Tokenization & Cleaning:** Removing unwanted symbols, tokenizing text for AI processing  
-- **Named Entity Recognition (NER):** Extracting **zodiac signs, user intent, and keywords**  
-- **Sentiment Labeling:** Fine-tuning **BERT-based sentiment classifier** to label user queries  
-- **Data Augmentation:** Generating **alternative Tarot readings** for model generalization  
-
-### **3. Model Training**  
-- **Sentiment Analysis Model (BERT-based classifier)**  
-  - Fine-tune to classify **positive, neutral, or negative emotions**  
-  - Helps adjust Tarot responses based on user sentiment  
-- **Tarot Text Generation Model (Fine-tuned GPT-2)**  
-  - Traine on the **Tarot Readings Dataset + Personalized Tarot Dataset**  
-  - Generates **structured, meaningful, and personalized Tarot readings**  
-
-
-### **5. Evaluation Metrics**  
-- **Engagement Score:** Measures user interaction levels  
-- **Text Coherence:** Ensures Tarot readings are fluent and logically structured  
-- **Sentiment Alignment:** Checks if readings match the detected user sentiment  
-- **Authenticity Perception:** Evaluates AI-generated readings vs. human-written Tarot texts  
-
-## Conclusion  
-This AI-powered Tarot reading system combines **NLP, sentiment analysis, and astrology-based modeling** to **personalize** and **enhance** fortune-telling experiences. By integrating **user sentiment and astrological influences**, this model aims to provide **engaging, context-aware, and interactive Tarot predictions**.  
+This project explores the use of **Natural Language Processing (NLP)** and **sentiment-aware AI models** to deliver **personalized Tarot readings**. Moving beyond static, generic predictions, our system integrates **user sentiment**, **astrological context**, and **randomized Tarot cards** to generate meaningful and emotionally aligned readings using a fine-tuned **Flan-T5 model**. Sentiment detection is handled via two **DistilBERT-based classifiers** for analyzing both user questions and generated readings.
 
 ---
 
+## Problem Statement  
+Traditional Tarot readings are often **template-based** and **lack emotional nuance**. Existing AI-based Tarot tools usually:
+- Ignore user **emotions**
+- Lack **astrological personalization**
+- Offer **repetitive or vague** predictions
+
+This project aims to solve these issues by combining **user sentiment**, **zodiac sign**, and **random card draws** to generate **context-aware Tarot readings** using advanced NLP techniques.
+
+---
+
+## Research Questions  
+1. How can **sentiment-aware** NLP enhance personalization in Tarot reading generation?  
+2. What is the effect of **zodiac-based conditioning** on the authenticity of AI-generated predictions?  
+3. How do AI-generated Tarot readings compare to human-written ones in **coherence** and **engagement**?
+
+---
+
+## Dataset  
+
+### 🧾 **Base Reference Dataset**  
+- **Source:** Hugging Face `Dendory/tarot`  
+- **Contains:** 78 Tarot cards (upright/reversed), interpretations by topic  
+- **Limitation:** Does not include zodiac or sentiment labels
+
+### ✨ **Custom AI-Generated Dataset**  
+- **Tool Used:** Gemini 1.5 Pro API  
+- **Structure:**  
+  - `zodiac_sign`  
+  - `question` (categorized into 6 themes: love, profession, health, family, education, money)  
+  - `card1`, `card2`, `card3` (randomized)  
+  - `reading` (full Tarot prediction text)  
+- **Generation Method:** 12 zodiac signs × 78 cards × 6 topics × 50 questions
+
+---
+
+## System Workflow  
+```
+User Input: [Birthdate, Question]
+      ↓
+Zodiac Conversion: Birthdate → Zodiac Sign
+      ↓
+Sentiment Analysis: Fine-tuned DistilBERT classifies user question → [positive, neutral, negative]
+      ↓
+Random Tarot Card Draws: Select card1, card2, card3
+      ↓
+Tarot Reading Generation:
+   Flan-T5 model takes [zodiac, question_sentiment, card1, card2, card3] → Generates reading
+      ↓
+Final Sentiment Analysis on Reading:
+   DistilBERT model evaluates reading's emotional tone
+      ↓
+Output: Personalized Tarot Reading
+```
+
+---
+
+## Model Training  
+
+### 🧠 **Sentiment Analysis Models (DistilBERT)**
+- **Question Sentiment Model**
+  - Fine-tuned `distilbert-base-uncased` on labeled user questions  
+  - Labels: `positive`, `neutral`, `negative`
+
+- **Reading Sentiment Model**
+  - Fine-tuned on labeled Tarot readings to assess emotional output
+
+### 🔮 **Tarot Reading Generator (Flan-T5)**
+- Fine-tuned `flan-t5-base` model  
+- Trained on the AI-generated dataset with inputs:  
+  `[zodiac_sign, question_sentiment, card1, card2, card3] → reading`
+
+---
+
+## Evaluation Metrics  
+
+| Metric Type     | Metric         | Purpose                                          |
+|-----------------|----------------|--------------------------------------------------|
+| Automatic       | **ROUGE**      | Measures idea/content preservation               |
+| Automatic       | **BERTScore**  | Evaluates semantic similarity to human readings |
+| Human-Centric   | **Likert Scale Survey** | Realism, emotional tone, personalization |
+| Human-Centric   | **Sentiment Alignment** | Checks emotional coherence between input and reading |
+
+---
+
+## Conclusion  
+This project demonstrates a novel pipeline for **sentiment- and zodiac-aware Tarot reading generation** using modern NLP techniques. By combining **Flan-T5** and **DistilBERT** with an AI-generated dataset, it delivers readings that are **emotionally aligned**, **astrologically personalized**, and **engaging**, paving the way for next-gen AI-assisted fortune-telling.
