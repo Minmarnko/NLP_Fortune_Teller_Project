@@ -51,7 +51,7 @@ Sentiment Analysis: Fine-tuned DistilBERT classifies user question → [positive
 Random Tarot Card Draws: Select card1, card2, card3
       ↓
 Tarot Reading Generation:
-   Flan-T5 model takes [zodiac, question_sentiment, card1, card2, card3] → Generates reading
+   Flan-T5 model takes [zodiac, question, question_sentiment, card1, card2, card3] → Generates reading
       ↓
 Personalized Tarot Reading
       ↓
