@@ -1,7 +1,7 @@
 # AI-Powered Tarot Reading Using NLP and Sentiment Analysis
 
 ## Project Overview  
-This project explores the use of **Natural Language Processing (NLP)** and **sentiment-aware AI models** to deliver **personalized Tarot readings**. Moving beyond static, generic predictions, our system integrates **user sentiment**, **astrological context**, and **randomized Tarot cards** to generate meaningful and emotionally aligned readings using a fine-tuned **Flan-T5 model**. Sentiment detection is handled via two **DistilBERT-based classifiers** for analyzing both user questions and generated readings.
+This project explores the use of **Natural Language Processing (NLP)** and **sentiment-aware AI models** to deliver **Tarot readings**. Moving beyond static, generic predictions, our system integrates **user sentiment**, **astrological context**, and **randomized Tarot cards** to generate meaningful and senstiment-aware aligned readings using a fine-tuned **Flan-T5 model**. Sentiment detection is handled via two **DistilBERT-based classifiers** for analyzing both user questions and generated readings.
 
 ---
 
@@ -26,7 +26,7 @@ This project aims to solve these issues by combining **user sentiment**, **zodia
 
 ### 🧾 **Base Reference Dataset**  
 - **Source:** Hugging Face `Dendory/tarot`  
-- **Contains:** 78 Tarot cards (upright/reversed), interpretations by topic  
+- **Contains:** 78 Tarot cards (upright), interpretations by topic  
 - **Limitation:** Does not include zodiac or sentiment labels
 
 ### ✨ **Custom AI-Generated Dataset**  
@@ -52,8 +52,6 @@ Random Tarot Card Draws: Select card1, card2, card3
       ↓
 Tarot Reading Generation:
    Flan-T5 model takes [zodiac, question, question_sentiment, card1, card2, card3] → Generates reading
-      ↓
-Personalized Tarot Reading
       ↓
 Final Sentiment Analysis on Reading:
    DistilBERT model evaluates reading's emotional tone
