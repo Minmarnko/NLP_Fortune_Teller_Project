@@ -4,7 +4,7 @@ import time
 import google.generativeai as genai
 
 # 🔐 Step 1: Configure Gemini API
-genai.configure(api_key="AIzaSyBX_duyO--fjijD-41n-AuiUB3feJLcPW0")  # Replace with your actual key
+genai.configure(api_key="API_KEY")  # Replace with your actual key
 
 # 🎴 Step 2: Data pool
 zodiac_signs = [
