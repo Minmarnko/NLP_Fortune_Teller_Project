@@ -1,5 +1,6 @@
-# AI-Powered Tarot Reading Using NLP and Sentiment Analysis
 
+# AI-Powered Tarot Reading Using NLP and Sentiment Analysis
+github link - https://github.com/Minmarnko/NLP_Fortune_Teller_Project/
 ## Project Overview  
 This project explores the use of **Natural Language Processing (NLP)** and **sentiment-aware AI models** to deliver **Tarot readings**. Moving beyond static, generic predictions, our system integrates **user sentiment**, **astrological context**, and **randomized Tarot cards** to generate meaningful and senstiment-aware aligned readings using a fine-tuned **Flan-T5 model**. Sentiment detection is handled via two **DistilBERT-based classifiers** for analyzing both user questions and generated readings.
 
