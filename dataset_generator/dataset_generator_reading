@@ -1,0 +1,73 @@
+import csv
+import random
+import time
+import google.generativeai as genai
+
+# 🔐 Step 1: Configure Gemini API
+genai.configure(api_key="AIzaSyBX_duyO--fjijD-41n-AuiUB3feJLcPW0")  # Replace this
+
+# ♈ Step 2: Zodiac signs
+zodiac_signs = [
+    "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo",
+    "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"
+]
+
+# 🎴 Step 3: Full 78 tarot cards
+tarot_cards = [
+    # Major Arcana
+    "The Fool", "The Magician", "The High Priestess", "The Empress", "The Emperor",
+    "The Hierophant", "The Lovers", "The Chariot", "Strength", "The Hermit",
+    "Wheel of Fortune", "Justice", "The Hanged Man", "Death", "Temperance",
+    "The Devil", "The Tower", "The Star", "The Moon", "The Sun", "Judgement", "The World",
+    # Minor Arcana
+    *[f"{rank} of {suit}" for suit in ["Wands", "Cups", "Swords", "Pentacles"]
+      for rank in ["Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
+                   "Page", "Knight", "Queen", "King"]]
+]
+
+# 🧾 Step 4: Prompt generator
+def create_prompt(zodiac, cards):
+    return f"""
+You are a tarot reader. First, invent a random tarot question someone might ask for life guidance (not love/career/health).
+
+Then, based on this question, the zodiac sign ({zodiac}), and the cards: {cards[0]}, {cards[1]}, {cards[2]},
+write a short tarot reading.
+
+Keep it 2–3 sentences, casual and clear. Avoid mystical or poetic language. Mention the zodiac naturally.
+
+Start only with the reading. Do not include the question in the output.
+"""
+
+# 💾 Step 5: Generate & save 10k readings
+output_file = "tarot_readings_11K_reading_only.csv"
+total_required = 11000
+generated = 0
+readings_set = set()
+
+with open(output_file, mode='w', newline='', encoding='utf-8') as file:
+    writer = csv.writer(file)
+    writer.writerow(["reading"])
+
+    while generated < total_required:
+        zodiac = random.choice(zodiac_signs)
+        cards = random.sample(tarot_cards, 3)
+        prompt = create_prompt(zodiac, cards)
+
+        try:
+            response = genai.GenerativeModel("gemini-1.5-pro-latest").generate_content(prompt)
+            reading = response.text.strip().replace("\n", " ")
+
+            if reading and reading not in readings_set and 15 < len(reading.split()) <= 60:
+                writer.writerow([reading])
+                readings_set.add(reading)
+                generated += 1
+
+                if generated % 1000 == 0:
+                    print(f"✅ {generated} readings completed...")
+
+            time.sleep(0.5)
+
+        except Exception:
+            time.sleep(2)
+
+print(f"\n🎉 Done! 11,000 tarot readings saved to: {output_file}")
