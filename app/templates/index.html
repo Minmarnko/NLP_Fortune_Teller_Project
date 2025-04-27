@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🔮 Tarot Fortune Teller AI 🔮</title>
+  
+  <!-- Include Bootstrap and your Custom Styles -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body style="background-image: url('{{ url_for('static', filename='galaxy_background.jpg') }}'); background-size: cover; background-attachment: fixed;">
+
+  <!-- Audio Files for Flip Sound and Background Music -->
+  <audio id="flip-sound" src="{{ url_for('static', filename='sounds/flip.mp3') }}"></audio>
+  <audio id="bg-music" src="{{ url_for('static', filename='sounds/background.mp3') }}" loop></audio>
+
+  <div class="container py-5 text-white text-center">
+    <h1 class="display-4 fw-bold mb-3 text-shadow">🔮 Tarot Fortune Teller AI 🔮</h1>
+    <p class="lead mb-4">Ask your destiny under the stars...</p>
+
+    <!-- 🎵 Music Control Button -->
+    <button id="music-toggle-btn" class="btn btn-outline-light mb-5">🎵 Play Music</button>
+
+    <!-- Tarot Form -->
+    <div class="row justify-content-center mb-5">
+      <div class="col-md-8">
+        <form id="tarot-form" class="form-container">
+          <div class="mb-3">
+            <label for="birthdate" class="form-label">🎂 Enter your Birthdate</label>
+            <input type="date" class="form-control" id="birthdate" name="birthdate" required>
+            <div id="zodiac-sign" class="mt-2"></div> <!-- Zodiac sign display -->
+          </div>
+          <div class="mb-3">
+            <label for="question" class="form-label">💬 Your Question for the Tarot</label>
+            <input type="text" class="form-control" id="question" name="question" placeholder="Type your question..." required>
+          </div>
+          <div class="d-grid gap-2">
+            <button type="button" id="draw-btn" class="btn btn-primary btn-lg">🎴 Draw a Card</button>
+            <button type="button" id="reveal-btn" class="btn btn-success btn-lg" style="display:none;">🔮 Reveal Full Reading</button>
+            <button type="button" id="new-reading-btn" class="btn btn-secondary btn-lg" style="display:none;">🔄 Start New Question</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Cards Display Section -->
+    <div id="cards-area" class="row justify-content-center"></div>
+
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" style="display:none;">
+      <div class="spinner-border text-light" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <!-- Tarot Reading Result Section -->
+    <div id="result" class="row justify-content-center mt-5" style="display:none;">
+      <div class="col-md-10 result-container">
+        <h3 class="text-shadow">🌟 Your Destiny Revealed 🌟</h3>
+        <p><strong>Zodiac Sign:</strong> <span id="zodiac"></span></p>
+        <p><strong>Question Sentiment:</strong> <span id="sentiment"></span></p> <!-- Displaying sentiment of user's question -->
+        <h4 class="text-shadow">🔮 Reading:</h4>
+        <p id="reading-text" class="lead"></p>
+        <p><strong>Reading Sentiment:</strong> <span id="reading-sentiment"></span></p> <!-- Displaying sentiment of the final reading -->
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript to Handle Form and UI Logic -->
+  <script>
+    let drawnCards = [];
+    let allCards = [];
+    let selectedCards = [];
+    let musicStarted = false; // To ensure music starts only once
+
+    const flipSound = document.getElementById('flip-sound');
+    const bgMusic = document.getElementById('bg-music');
+
+    // Set the background music volume to a softer level (e.g., 0.3 or 0.4)
+    bgMusic.volume = 0.08;  // Adjust the volume to your liking
+
+    // Play background music once the user clicks "Draw a Card" (user interaction)
+    $('#draw-btn').click(function() {
+      if (!musicStarted) {
+        bgMusic.play().catch(function(error) {
+          console.log("Autoplay blocked, waiting for user interaction.");
+        });
+        musicStarted = true;
+      }
+
+      var formData = {
+        birthdate: $('#birthdate').val(),
+        question: $('#question').val()
+      };
+
+      // Simulating card drawing (draw one card at a time)
+      if (drawnCards.length < 3) {
+        if (allCards.length === 0) {
+          $.post('/draw_cards', formData, function(data) {
+            allCards = data.drawn_cards; // Get cards from backend (simulated here)
+            drawOneCard(); // Draw one card after data is received
+          });
+        } else {
+          drawOneCard(); // Draw one card if cards are already available
+        }
+      }
+    });
+
+    // Function to draw one card at once
+    function drawOneCard() {
+      if (drawnCards.length < 3) {
+        var card = allCards[drawnCards.length];
+        drawnCards.push(card);
+        selectedCards.push(card);
+
+        var cardFile = card.toLowerCase().replace(/ /g, "_") + ".jpg";
+
+        $('#cards-area').append(`
+          <div class="col-md-3 mb-4 d-flex flex-column align-items-center card-wrapper" id="wrapper-${drawnCards.length}">
+            <div class="card-flip">
+              <div class="card-inner" id="card-${drawnCards.length}">
+                <div class="card-front">
+                  <img src="/static/cards/card_back.jpg" class="card-img-top" alt="Card Back" style="width:180px;">
+                </div>
+                <div class="card-back">
+                  <img src="/static/cards/${cardFile}" class="card-img-top" alt="${card}" style="width:180px;">
+                </div>
+              </div>
+            </div>
+            <h5 class="card-title text-center mt-2" id="title-${drawnCards.length}" style="display:none;">${card}</h5>
+          </div>
+        `);
+
+        if (drawnCards.length === 3) {
+          $('#draw-btn').hide();
+          $('#reveal-btn').fadeIn();
+        }
+      }
+    }
+
+    // Reveal Full Reading
+    $('#reveal-btn').click(function() {
+      flipSound.play();
+      $('#loading-spinner').fadeIn();
+
+      var formData = {
+        birthdate: $('#birthdate').val(),
+        question: $('#question').val(),
+        card1: selectedCards[0],
+        card2: selectedCards[1],
+        card3: selectedCards[2]
+      };
+
+      $.post('/generate_reading', formData, function(data) {
+        setTimeout(() => {
+          $('#loading-spinner').fadeOut();
+
+          $('#zodiac').text(data.zodiac);
+          $('#sentiment').text(data.sentiment); // Sentiment of the user's question
+          $('#reading-text').text(data.reading);
+          $('#reading-sentiment').text(data.final_sentiment); // Sentiment of the final reading
+          $('#result').fadeIn('slow');
+
+          for (let i = 1; i <= 3; i++) {
+            $(`#card-${i}`).addClass('flip-now');
+            $(`#title-${i}`).fadeIn();
+          }
+
+          setTimeout(() => {
+            $('.card-wrapper').fadeOut('slow');
+            $('#new-reading-btn').fadeIn();
+          }, 8000);
+        }, 3000);
+      });
+    });
+
+    // Start New Question
+    $('#new-reading-btn').click(function() {
+      $('#cards-area').empty();
+      $('#result').hide();
+      $('#draw-btn').fadeIn();
+      $('#reveal-btn').hide();
+      $('#new-reading-btn').hide();
+      drawnCards = [];
+      allCards = [];
+      selectedCards = [];
+      $('#question').val('');
+      $('#birthdate').val('');
+    });
+  </script>
+
+</body>
+</html>
