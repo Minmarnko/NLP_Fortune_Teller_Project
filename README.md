@@ -14,8 +14,9 @@
 7. [Evaluation](#evaluation)
    - [Quantitative Evaluation](#quantitative-evaluation)
    - [Qualitative Evaluation](#qualitative-evaluation)
-8. [Future Work](#future-work)
-9. [Conclusion](#conclusion)
+8. [Model Deployment](#model-deployment)
+9. [Future Work](#future-work)
+10. [Conclusion](#conclusion)
 
 ---
 
@@ -110,10 +111,6 @@ User feedback was collected through **surveys** on:
 
 Suggestions for improvement included the desire for **longer, more detailed readings**, especially for **emotionally complex** or **ambiguous questions**.
 
-Certainly! Below is a comprehensive explanation of the **model deployment** section, incorporating your usage of **Flask** for local deployment, along with instructions to include a **sample web image**.
-
----
-
 ## 8. Model Deployment
 
 The AI-powered Tarot reading system was deployed locally via a **Flask-based web application**, providing a seamless, interactive experience for users. The system allows users to input their **birthdate** and **question** and generates a **personalized Tarot reading** based on their input. The app uses **sentiment analysis** and **zodiac sign-based personalization** to ensure the generated readings are contextually relevant and emotionally resonant.
@@ -153,12 +150,6 @@ The layout includes:
 - **Interactive music** and user interface elements for enhanced experience.
 
 The deployment successfully creates an engaging and immersive **Tarot reading experience**, making use of **AI-powered personalization** to tailor each reading to the user’s emotional and astrological context.
-
----
-
-This section now includes a **concise explanation** of the **Flask deployment** process, as well as the integration of **sentiment analysis** and **Tarot card generation** models. Additionally, it links to the **sample web interface** screenshot. You can replace the path to the image with the correct file path on your hosting platform.
-
-Let me know if you need any further modifications!
 
 ## 9. Future Work
 
