@@ -110,14 +110,64 @@ User feedback was collected through **surveys** on:
 
 Suggestions for improvement included the desire for **longer, more detailed readings**, especially for **emotionally complex** or **ambiguous questions**.
 
-## 8. Future Work
+Certainly! Below is a comprehensive explanation of the **model deployment** section, incorporating your usage of **Flask** for local deployment, along with instructions to include a **sample web image**.
+
+---
+
+## 8. Model Deployment
+
+The AI-powered Tarot reading system was deployed locally via a **Flask-based web application**, providing a seamless, interactive experience for users. The system allows users to input their **birthdate** and **question** and generates a **personalized Tarot reading** based on their input. The app uses **sentiment analysis** and **zodiac sign-based personalization** to ensure the generated readings are contextually relevant and emotionally resonant.
+
+### Key Features of the Web Application:
+- **User Input Fields**:
+  - **Birthdate Input**: Users can enter their exact birthdate in **mm/dd/yyyy** format to derive their **zodiac sign**.
+  - **Question Input**: A text field where users can type their Tarot-related query, such as "What is my love life like?" or "What does my career path hold?"
+  
+- **"Draw a Card" Button**: This button triggers the Tarot reading process, drawing three cards randomly and generating a detailed personalized reading based on the user’s zodiac sign, emotional sentiment, and drawn cards.
+
+- **Generated Tarot Reading**: Once the user submits their information, the system generates and displays the Tarot reading in real-time, complete with the **zodiac sign** and a **sentiment-adjusted interpretation** of the three drawn cards.
+
+- **Interactive Features**:
+  - **Background Music**: An embedded **music player** button is included to enhance the immersive experience during the Tarot reading.
+  - **Card Visualization**: The drawn Tarot cards are shown as images on the page, visually representing the user's Tarot session.
+  - **Reading Summary**: The system provides a summary of each drawn card’s meaning in the reading.
+
+### Deployment Process:
+1. **Flask Setup**: The Flask web application was deployed on the local server, ensuring privacy and fast interactions. Users can access the application by visiting `http://127.0.0.1:5000/` in their browser.
+
+2. **Web Interface**: The front-end interface was designed using **HTML** and **CSS** to ensure a user-friendly and visually appealing experience. **JavaScript** was used for handling button interactions and ensuring smooth communication between the front-end and back-end.
+
+3. **Model Integration**: Both the **DistilBERT** and **Flan-T5** models were integrated into the Flask application, allowing for real-time processing of user input. The **DistilBERT model** classifies the sentiment of the question, and **Flan-T5** generates the Tarot reading based on the user's input and sentiment.
+
+4. **Local Hosting**: The application is hosted locally, meaning that all processing and data handling occur on the user’s device, ensuring quick interactions without the need for external hosting.
+
+### Sample Web Interface:
+Here is a **screenshot** of the user interface where users can interact with the system:
+
+![Sample Web Interface](images/sample1.png)
+
+The layout includes:
+- **Input fields** for entering the birthdate and question.
+- **Draw a Card** button that triggers the Tarot reading process.
+- **Displayed Tarot reading** with visual card representations.
+- **Interactive music** and user interface elements for enhanced experience.
+
+The deployment successfully creates an engaging and immersive **Tarot reading experience**, making use of **AI-powered personalization** to tailor each reading to the user’s emotional and astrological context.
+
+---
+
+This section now includes a **concise explanation** of the **Flask deployment** process, as well as the integration of **sentiment analysis** and **Tarot card generation** models. Additionally, it links to the **sample web interface** screenshot. You can replace the path to the image with the correct file path on your hosting platform.
+
+Let me know if you need any further modifications!
+
+## 9. Future Work
 
 - **Zero-Shot Testing**: To assess how well the model handles **unseen queries** and generalizes to new scenarios.
 - **Retrieval-Augmented Generation (RAG)**: Incorporating **RAG** for richer, contextually relevant content by retrieving external knowledge.
 - **Multi-turn Dialogue**: Implementing dynamic interactions, enabling follow-up questions and responses over multiple sessions.
 - **LangChain Integration**: Adding **LangChain** for **multi-turn conversations** and better **external data integration**, further improving personalization and context.
 
-## 9. Conclusion
+## 10. Conclusion
 
 This AI-powered Tarot reading system combines **sentiment analysis** and **zodiac-based personalization** to generate emotionally aligned and contextually relevant Tarot readings. With strong evaluation results, the system showcases the potential of **NLP** in enhancing traditional practices. Future work will focus on improving generalization, adding richer external knowledge, and implementing dynamic user interactions for a more engaging Tarot experience.
 
