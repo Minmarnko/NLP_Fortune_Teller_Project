@@ -1,92 +1,123 @@
-
 # AI-Powered Tarot Reading Using NLP and Sentiment Analysis
-github link - https://github.com/Minmarnko/NLP_Fortune_Teller_Project/
-## Project Overview  
-This project explores the use of **Natural Language Processing (NLP)** and **sentiment-aware AI models** to deliver **Tarot readings**. Moving beyond static, generic predictions, our system integrates **user sentiment**, **astrological context**, and **randomized Tarot cards** to generate meaningful and senstiment-aware aligned readings using a fine-tuned **Flan-T5 model**. Sentiment detection is handled via two **DistilBERT-based classifiers** for analyzing both user questions and generated readings.
+
+## Table of Contents
+1. [Introduction](#introduction)
+2. [Problem Statement](#problem-statement)
+3. [Motivation](#motivation)
+4. [Solution Requirements](#solution-requirements)
+5. [Related Work](#related-work)
+6. [Methodology](#methodology)
+   - [Model Architecture](#model-architecture)
+   - [Dataset Preparation](#dataset-preparation)
+   - [Data Preprocessing](#data-preprocessing)
+   - [Model Training](#model-training)
+7. [Evaluation](#evaluation)
+   - [Quantitative Evaluation](#quantitative-evaluation)
+   - [Qualitative Evaluation](#qualitative-evaluation)
+8. [Future Work](#future-work)
+9. [Conclusion](#conclusion)
 
 ---
 
-## Problem Statement  
-Traditional Tarot readings are often **template-based** and **lack emotional nuance**. Existing AI-based Tarot tools usually:
-- Ignore user **emotions**
-- Lack **astrological personalization**
-- Offer **repetitive or vague** predictions
+## 1. Introduction
 
-This project aims to solve these issues by combining **user sentiment**, **zodiac sign**, and **random card draws** to generate **context-aware Tarot readings** using advanced NLP techniques.
+This project presents an **AI-powered Tarot reading system** that utilizes **Natural Language Processing (NLP)** and **sentiment-aware AI models** to generate personalized and emotionally resonant Tarot readings. The system processes user input (birth date and question), derives the user's **zodiac sign**, detects the **sentiment** of their question using **DistilBERT**, and draws three Tarot cards. A personalized reading is generated using **Flan-T5**, a sequence-to-sequence model fine-tuned for instruction-based tasks.
 
----
+By combining traditional Tarot practices with modern AI, the system aims to offer dynamic, engaging, and personalized experiences for users, enhancing accessibility to Tarot readings.
 
-## Research Questions  
-1. How can **sentiment-aware** NLP enhance personalization in Tarot reading generation?  
-2. What is the effect of **zodiac-based conditioning** on the authenticity of AI-generated predictions?  
-3. How do AI-generated Tarot readings compare to human-written ones in **coherence** and **engagement**?
+## 2. Problem Statement
 
----
+Traditional Tarot reading is often **static** and **non-adaptive**, relying on intuition and predefined templates. These methods can result in generic readings that fail to address individual user needs. Existing AI Tarot systems mostly use **predefined templates**, which do not integrate **sentiment analysis** or **personalized data** (such as **zodiac signs**), making the readings feel impersonal.
 
-## Dataset  
+This project solves these issues by incorporating **sentiment analysis** to capture emotional tones and **astrological personalization** based on users' zodiac signs, ensuring the generated readings are emotionally relevant, personalized, and dynamic.
 
-### 🧾 **Base Reference Dataset**  
-- **Source:** Hugging Face `Dendory/tarot`  
-- **Contains:** 78 Tarot cards (upright), interpretations by topic  
-- **Limitation:** Does not include zodiac or sentiment labels
+## 3. Motivation
 
-### ✨ **Custom AI-Generated Dataset**  
-- **Tool Used:** Gemini 1.5 Pro API  
-- **Structure:**  
-  - `zodiac_sign`  
-  - `question` (categorized into 6 themes: love, profession, health, family, education, money)  
-  - `card1`, `card2`, `card3` (randomized)  
-  - `reading` (full Tarot prediction text)  
-- **Generation Method:** 12 zodiac signs × 78 cards × 6 topics × 50 questions
+The motivation behind this project is to bring personalization and emotional depth to **AI-driven Tarot readings**. Key motivations include:
+- **Personalized Experiences**: Leveraging **sentiment analysis** and **zodiac signs** to tailor readings to the user’s emotional state and personal background.
+- **Enhanced Accessibility**: Making Tarot readings more accessible to users worldwide, offering an interactive platform to engage with the system.
+- **Fusing Tradition with Technology**: Retaining the symbolic richness of traditional Tarot while enhancing it with modern AI capabilities to offer a more meaningful and engaging experience.
 
----
+## 4. Solution Requirements
 
-## System Workflow  
-```
-User Input: [Birthdate, Question]
-      ↓
-Zodiac Conversion: Birthdate → Zodiac Sign
-      ↓
-Sentiment Analysis: Fine-tuned DistilBERT classifies user question → [positive, neutral, negative]
-      ↓
-Random Tarot Card Draws: Select card1, card2, card3
-      ↓
-Tarot Reading Generation:
-   Flan-T5 model takes [zodiac, question, question_sentiment, card1, card2, card3] → Generates reading
-      ↓
-Final Sentiment Analysis on Reading:
-   DistilBERT model evaluates reading's emotional tone
-```
+The AI-powered Tarot reading system should meet the following requirements to be effective:
+- **Personalization**: Dynamically adapting to user inputs such as birthdate, question sentiment, and emotional context.
+- **Engagement**: Providing emotionally resonant, contextually relevant, and entertaining readings.
+- **Authenticity**: Integrating **astrological insights** and **numerology** to create authentic Tarot readings.
+- **Ethical AI**: Ensuring the AI-generated content is **constructive**, avoiding misleading or overly deterministic predictions.
 
----
+## 5. Related Work
 
-## Model Training  
+- **Sentiment Analysis in AI-generated Content**: Studies have shown how **sentiment analysis** enhances personalization in AI content, helping to match the emotional tone of the output with the user’s emotional state.
+  
+- **AI in Tarot and Fortune-Telling**: Existing AI models for **predictive analytics** and **fortune-telling** have not yet fully integrated **personalization** and **zodiac-based insights**, presenting a unique opportunity for this project.
 
-### 🧠 **Sentiment Analysis Models (DistilBERT)**
-- **Question Sentiment Model**
-  - Fine-tuned `distilbert-base-uncased` on labeled user questions  
-  - Labels: `positive`, `neutral`, `negative`
+- **Text Generation Models**: **Flan-T5** and other **GPT-like models** have demonstrated strong capabilities in **text generation**, but their application in **personalized fortune-telling** is still underexplored.
 
-- **Reading Sentiment Model**
-  - Fine-tuned on labeled Tarot readings to assess emotional output
+## 6. Methodology
 
-### 🔮 **Tarot Reading Generator (Flan-T5)**
-- Fine-tuned `flan-t5-base` model  
-- Trained on the AI-generated dataset with inputs:  
-  `[zodiac_sign, question, question_sentiment, card1, card2, card3] → reading`
+### Model Architecture
 
----
+The system utilizes a **dual-model architecture**:
+1. **Sentiment Classification (DistilBERT)**: This model classifies the sentiment of user input (positive, neutral, negative).
+2. **Text Generation (Flan-T5)**: Based on the sentiment and **zodiac sign**, Flan-T5 generates a personalized Tarot reading.
 
-## Evaluation Metrics  
+The workflow involves:
+- User input: **birthdate** and **question**.
+- **Preprocessing**: Tokenization and **sentiment analysis**.
+- **Sentiment Detection**: Using **DistilBERT** to classify sentiment.
+- **Tarot Generation**: Using **Flan-T5** to create a reading based on the input and sentiment.
 
-| Metric Type     | Metric         | Purpose                                          |
-|-----------------|----------------|--------------------------------------------------|
-| Automatic       | **ROUGE**      | Measures idea/content preservation               |
-| Automatic       | **BERTScore**  | Evaluates semantic similarity to human readings |
-| Human-Centric   | **Likert Scale Survey** | Realism, emotional tone, personalization |
-| Human-Centric   | **Sentiment Alignment** | Checks emotional coherence between input and reading |
+### Dataset Preparation
 
----
+The dataset used for model training includes:
+- **Sentiment Question Dataset**: A dataset containing **10,793** user questions labeled with sentiment (positive, neutral, negative).
+- **Sentiment Reading Dataset**: **12,148** labeled Tarot readings with sentiment annotations.
+- **Tarot Dataset**: Hugging Face’s dataset of **5,000+** Tarot card meanings and interpretations.
+- **Synthetic Extended Dataset**: **11,990** synthetic entries with **zodiac signs**, **user questions**, **sentiment labels**, and **Tarot card draws** created using the **Gemini API**.
 
-## Conclusion  
-This project demonstrates a novel pipeline for **sentiment- and zodiac-aware Tarot reading generation** using modern NLP techniques. By combining **Flan-T5** and **DistilBERT** with an AI-generated dataset, it delivers readings that are **emotionally aligned**, **astrologically personalized**, and **engaging**, paving the way for next-gen AI-assisted fortune-telling.
+This dataset helps fine-tune the models for **personalized**, **emotionally resonant** Tarot readings. It includes data across six life areas: **love**, **career**, **health**, **family**, **education**, and **money**.
+
+### Data Preprocessing
+
+The data preprocessing steps include:
+- **Input-Target Construction**: Combining the **zodiac sign**, **sentiment label**, **user question**, and **Tarot card draw** into a single input sequence. The target is the **Tarot reading**.
+- **Data Cleaning**: Removing rows with missing values.
+- **Tokenization**: Using **T5Tokenizer** to tokenize inputs and outputs for compatibility with **Flan-T5**.
+- **Batch Mapping**: Tokenizing the dataset in batches for efficient training.
+
+### Model Training
+
+Both **DistilBERT** models (for question and reading sentiment) were trained using the **Hugging Face Trainer API**, with a **batch size of 16** for training and **64** for evaluation. The models were trained for **4 epochs** with a **learning rate of 2e-5** and **weight decay of 0.01**. 
+
+The **Flan-T5 model** for text generation was fine-tuned with a **learning rate of 3e-4** over **5 epochs**, using a **batch size of 4**.
+
+## 7. Evaluation
+
+### Quantitative Evaluation
+- **ROUGE-1**: 0.46
+- **ROUGE-2**: 0.24
+- **BERTScore F1**: 0.91
+
+These metrics indicate that the model effectively captures the core themes of Tarot readings while maintaining flexibility in language generation. The **F1-score** and **accuracy** metrics for both **question** and **reading sentiment models** were **97.13%** and **97.41%**, respectively, demonstrating excellent performance.
+
+### Qualitative Evaluation
+User feedback was collected through **surveys** on:
+- **Realism**: 3.2/5
+- **Emotional Resonance**: 3.7/5
+- **Personalization**: 3.1/5
+- **Overall Satisfaction**: 3.8/5
+
+Suggestions for improvement included the desire for **longer, more detailed readings**, especially for **emotionally complex** or **ambiguous questions**.
+
+## 8. Future Work
+
+- **Zero-Shot Testing**: To assess how well the model handles **unseen queries** and generalizes to new scenarios.
+- **Retrieval-Augmented Generation (RAG)**: Incorporating **RAG** for richer, contextually relevant content by retrieving external knowledge.
+- **Multi-turn Dialogue**: Implementing dynamic interactions, enabling follow-up questions and responses over multiple sessions.
+- **LangChain Integration**: Adding **LangChain** for **multi-turn conversations** and better **external data integration**, further improving personalization and context.
+
+## 9. Conclusion
+
+This AI-powered Tarot reading system combines **sentiment analysis** and **zodiac-based personalization** to generate emotionally aligned and contextually relevant Tarot readings. With strong evaluation results, the system showcases the potential of **NLP** in enhancing traditional practices. Future work will focus on improving generalization, adding richer external knowledge, and implementing dynamic user interactions for a more engaging Tarot experience.
+
