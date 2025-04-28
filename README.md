@@ -1,5 +1,10 @@
 # AI-Powered Tarot Reading Using NLP and Sentiment Analysis
 
+Team Members:
+Soe Htet Naing (st125166)
+Min Marn Ko (st125437)
+Phue Pwint Thwe (st124784)
+
 ## Table of Contents
 1. [Introduction](#introduction)
 2. [Problem Statement](#problem-statement)
